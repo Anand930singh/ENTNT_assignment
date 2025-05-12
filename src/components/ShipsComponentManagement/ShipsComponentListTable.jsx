@@ -5,14 +5,16 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Button, Typography } from '@mui/material';
 import Cookies from 'js-cookie';
-import { Typography } from '@mui/material';
 import ShipComponentEditForm from './ShipComponentEditForm';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ShipsComponentListTable({ setSelectedComponentDetail }) {
   const [rows, setRows] = React.useState([]);
   const [editingComponent, setEditingComponent] = React.useState(null);
+  const [openAddForm, setOpenAddForm] = React.useState(false);
 
   React.useEffect(() => {
     const cookieData = Cookies.get('components');
@@ -21,6 +23,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
         setRows(JSON.parse(cookieData));
       } catch (error) {
         console.error('Failed to parse components cookie', error);
+        toast.error('Failed to load components. Please try again.');
       }
     }
   }, []);
@@ -34,8 +37,10 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
       const updatedData = parsedData.filter((row) => row.id !== id);
       Cookies.set('components', JSON.stringify(updatedData));
       setRows(updatedData);
+      toast.success('Component deleted successfully');
     } catch (err) {
       console.error('Delete failed', err);
+      toast.error('Failed to delete component. Please try again.');
     }
   };
 
@@ -54,6 +59,24 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
     Cookies.set('components', JSON.stringify(updatedRows));
     setRows(updatedRows);
     setEditingComponent(null);
+    toast.success('Component updated successfully');
+  };
+
+  const handleAddComponent = () => {
+    setOpenAddForm(true);
+  };
+
+  const handleSaveNewComponent = (newComponent) => {
+    try {
+      const updatedComponents = [...rows, { ...newComponent, id: 'c' + Date.now() }];
+      Cookies.set('components', JSON.stringify(updatedComponents));
+      setRows(updatedComponents);
+      setOpenAddForm(false);
+      toast.success('Component added successfully');
+    } catch (error) {
+      console.error('Error adding component', error);
+      toast.error('Failed to add component. Please try again.');
+    }
   };
 
   const columns = [
@@ -87,9 +110,25 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
 
   return (
     <div style={{ width: '100%' }}>
-      <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 1 }}>
-        Ship Components
-      </Typography>
+      <div className="headingContainer">
+        <Typography variant="h6" className="headingTitle">
+          Ship Components
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            padding: '6px 16px',
+            borderWidth: '3px',
+            textTransform: 'none'
+          }}
+          onClick={handleAddComponent}
+        >
+          Add Component
+        </Button>
+      </div>
+
       <Paper sx={{ width: '98%' }}>
         <DataGrid
           rows={rows}
@@ -97,8 +136,8 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
           getRowId={(row) => row.id}
           pageSizeOptions={[5, 10]}
           initialState={{
-    pagination: { paginationModel: { pageSize: 5, page: 0 } },
-  }}
+            pagination: { paginationModel: { pageSize: 5, page: 0 } },
+          }}
           sx={{
             border: 0,
             '& .super-app-theme--header': {
@@ -108,6 +147,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
           }}
         />
       </Paper>
+
       {editingComponent && (
         <ShipComponentEditForm
           component={editingComponent}
@@ -115,6 +155,16 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
           onCancel={handleCancelEdit}
         />
       )}
+
+      {openAddForm && (
+        <ShipComponentEditForm
+          component={null}
+          onSave={handleSaveNewComponent}
+          onCancel={() => setOpenAddForm(false)}
+        />
+      )}
+
+      <ToastContainer />
     </div>
   );
 }

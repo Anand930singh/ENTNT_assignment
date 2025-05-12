@@ -9,7 +9,7 @@ const ShipEditForm = ({ ship, onSave, onCancel }) => {
     name: "",
     imo: "",
     flag: "",
-    status: "",
+    status: "Active",
   })
 
   useEffect(() => {

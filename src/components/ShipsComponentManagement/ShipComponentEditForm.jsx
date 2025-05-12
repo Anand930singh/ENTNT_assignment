@@ -1,50 +1,87 @@
-import { useState, useEffect } from "react"
-import { Save, X } from "lucide-react"
-import "../../styles/HomeShip.css"
+import { useState, useEffect } from "react";
+import { Save, X } from "lucide-react";
+import "../../styles/HomeShip.css";
+import Cookies from "js-cookie";
 
 const ShipComponentEditForm = ({ component, onSave, onCancel }) => {
+  const isEdit = Boolean(component);
+  const [availableShips, setAvailableShips] = useState([]);
+
   const [formData, setFormData] = useState({
+    shipId: "",
     name: "",
     serialNumber: "",
     installDate: "",
     lastMaintenanceDate: "",
-  })
+  });
 
   useEffect(() => {
+    const shipsFromCookie = Cookies.get("ships");
+    if (shipsFromCookie) {
+      try {
+        const parsedShips = JSON.parse(shipsFromCookie);
+        setAvailableShips(parsedShips);
+      } catch (err) {
+        console.error("Invalid ships cookie:", err);
+      }
+    }
+
     if (component) {
       setFormData({
+        shipId: component.shipId || "",
         name: component.name || "",
         serialNumber: component.serialNumber || "",
         installDate: component.installDate || "",
         lastMaintenanceDate: component.lastMaintenanceDate || "",
-      })
+      });
     }
-  }, [component])
+  }, [component]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onSave({ ...component, ...formData }) // Pass updated component with id and shipId intact
-  }
+    e.preventDefault();
+    if (!formData.shipId && !isEdit) return;
+    onSave({ ...(component || {}), ...formData });
+  };
 
   return (
     <div className="ship-edit-overlay">
       <div className="ship-edit-container">
         <div className="ship-edit-header">
-          <h2>Edit Component</h2>
+          <h2>{isEdit ? "Edit Component" : "Add Component"}</h2>
           <button className="close-button" onClick={onCancel}>
             <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="ship-edit-form">
+          {!isEdit && (
+            <div className="form-group">
+              <label htmlFor="shipId">Select Ship</label>
+              <select
+                id="shipId"
+                name="shipId"
+                value={formData.shipId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Select a Ship --</option>
+                {availableShips.map((ship) => (
+                  <option key={ship.id} value={ship.id}>
+                    {ship.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="name">Component Name</label>
             <input
@@ -99,13 +136,13 @@ const ShipComponentEditForm = ({ component, onSave, onCancel }) => {
             </button>
             <button type="submit" className="save-button">
               <Save size={16} />
-              Save Changes
+              {isEdit ? "Save Changes" : "Add Component"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ShipComponentEditForm
+export default ShipComponentEditForm;

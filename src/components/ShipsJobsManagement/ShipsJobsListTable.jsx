@@ -8,33 +8,59 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Cookies from 'js-cookie';
 import { Typography } from '@mui/material';
 import ShipsJobEditForm from './ShipsJobEditForm';
+import Button from '@mui/material/Button';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ShipsJobsListTable() {
   const [rows, setRows] = React.useState([]);
   const [editingJob, setEditingJob] = React.useState(null);
+  const [addingJob, setAddingJob] = React.useState(false);
+
+  const handleAddClick = () => {
+    setEditingJob(null);
+    setAddingJob(true);
+  };
+
+  const handleSaveAdd = (newJob) => {
+    try {
+      const updatedRows = [...rows, newJob];
+      Cookies.set('jobs', JSON.stringify(updatedRows));
+      setRows(updatedRows);
+      toast.success('Job added successfully!');
+    } catch (err) {
+      console.error('Failed to add job', err);
+      toast.error('Failed to add job!');
+    } finally {
+      setAddingJob(false);
+    }
+  };
 
   React.useEffect(() => {
-    const cookieData = Cookies.get('jobs');
-    if (cookieData) {
-      try {
+    try {
+      const cookieData = Cookies.get('jobs');
+      if (cookieData) {
         setRows(JSON.parse(cookieData));
-      } catch (error) {
-        console.error('Failed to parse jobs cookie', error);
       }
+    } catch (error) {
+      console.error('Failed to parse jobs cookie', error);
+      toast.error('Error loading saved jobs!');
     }
   }, []);
 
   const handleDelete = (id) => {
-    const cookieData = Cookies.get('jobs');
-    if (!cookieData) return;
-
     try {
+      const cookieData = Cookies.get('jobs');
+      if (!cookieData) return;
+
       const parsedData = JSON.parse(cookieData);
       const updatedData = parsedData.filter((row) => row.id !== id);
       Cookies.set('jobs', JSON.stringify(updatedData));
       setRows(updatedData);
+      toast.success('Job deleted successfully!');
     } catch (err) {
       console.error('Delete failed', err);
+      toast.error('Failed to delete job!');
     }
   };
 
@@ -47,12 +73,19 @@ export default function ShipsJobsListTable() {
   };
 
   const handleSaveEdit = (updatedJob) => {
-    const updatedRows = rows.map((row) =>
-      row.id === editingJob.id ? { ...row, ...updatedJob } : row
-    );
-    Cookies.set('jobs', JSON.stringify(updatedRows));
-    setRows(updatedRows);
-    setEditingJob(null);
+    try {
+      const updatedRows = rows.map((row) =>
+        row.id === editingJob.id ? { ...row, ...updatedJob } : row
+      );
+      Cookies.set('jobs', JSON.stringify(updatedRows));
+      setRows(updatedRows);
+      toast.success('Job updated successfully!');
+    } catch (err) {
+      console.error('Edit failed', err);
+      toast.error('Failed to update job!');
+    } finally {
+      setEditingJob(null);
+    }
   };
 
   const columns = [
@@ -65,19 +98,14 @@ export default function ShipsJobsListTable() {
       headerClassName: 'super-app-theme--header',
       renderCell: (params) => {
         const statusColorMap = {
-          Open: '#1976d2',       // Blue
-          Closed: '#616161',     // Dark Gray
-          Progress: '#f57c00',   // Orange
-          Completed: '#2e7d32',  // Green
+          Open: '#1976d2',
+          Closed: '#616161',
+          Progress: '#f57c00',
+          Completed: '#2e7d32',
         };
 
         return (
-          <span
-            style={{
-              color: statusColorMap[params.value] || '#000',
-              fontWeight: 600,
-            }}
-          >
+          <span style={{ color: statusColorMap[params.value] || '#000', fontWeight: 600 }}>
             {params.value}
           </span>
         );
@@ -111,9 +139,25 @@ export default function ShipsJobsListTable() {
 
   return (
     <div style={{ width: '100%' }}>
-      <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 1 }}>
-        Ship Jobs
-      </Typography>
+      <div className="headingContainer">
+        <Typography variant="h6" className="headingTitle">
+          Ship Jobs
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            padding: '6px 16px',
+            borderWidth: '3px',
+            textTransform: 'none',
+          }}
+          onClick={handleAddClick}
+        >
+          Add Job
+        </Button>
+      </div>
+
       <Paper sx={{ width: '98%' }}>
         <DataGrid
           rows={rows}
@@ -132,13 +176,20 @@ export default function ShipsJobsListTable() {
           }}
         />
       </Paper>
-      {editingJob && (
+
+      {(editingJob || addingJob) && (
         <ShipsJobEditForm
           job={editingJob}
-          onSave={handleSaveEdit}
-          onCancel={handleCancelEdit}
+          isAddMode={addingJob}
+          onSave={addingJob ? handleSaveAdd : handleSaveEdit}
+          onCancel={() => {
+            setAddingJob(false);
+            setEditingJob(null);
+          }}
         />
       )}
+
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }
