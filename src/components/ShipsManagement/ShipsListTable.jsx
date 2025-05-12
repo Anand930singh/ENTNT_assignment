@@ -8,30 +8,38 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import Users from '../../data/users.json';
 import Cookies from 'js-cookie';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import ShipEditForm from './ShipEditForm';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ShipsListTable({ setSelectedShipDetail }) {
-  const [rows, setRows] = React.useState();
+  const [rows, setRows] = React.useState([]);
   const [editingShip, setEditingShip] = React.useState(null);
+  const [openAddForm, setOpenAddForm] = React.useState(false);
 
   React.useEffect(() => {
     if (Array.isArray(Users.ships)) {
-      setRows(JSON.parse(Cookies.get('ships')))
+      setRows(JSON.parse(Cookies.get('ships') || '[]'));
     }
   }, []);
 
   const handleDelete = (id) => {
     const cookieData = Cookies.get('ships');
-    if (!cookieData) return;
+    if (!cookieData) {
+      toast.error('No ships data found.');
+      return;
+    }
 
     try {
       const parsedData = JSON.parse(cookieData);
       const updatedData = parsedData.filter((row) => row.id !== id);
       Cookies.set('ships', JSON.stringify(updatedData));
       setRows(updatedData);
+      toast.success('Ship deleted successfully.');
     } catch (err) {
       console.error('Delete failed', err);
+      toast.error('Failed to delete the ship.');
     }
   };
 
@@ -44,14 +52,32 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
   };
 
   const handleSaveEdit = (updatedShip) => {
-    const updatedRows = rows.map((row) =>
-      row.id === editingShip.id ? { ...row, ...updatedShip } : row
-    );
-    Cookies.set('ships', JSON.stringify(updatedRows));
-    setRows(updatedRows);
-    setEditingShip(null);
+    try {
+      const updatedRows = rows.map((row) =>
+        row.id === editingShip.id ? { ...row, ...updatedShip } : row
+      );
+      Cookies.set('ships', JSON.stringify(updatedRows));
+      setRows(updatedRows);
+      setEditingShip(null);
+      toast.success('Ship details updated successfully.');
+    } catch (err) {
+      console.error('Edit failed', err);
+      toast.error('Failed to update ship details.');
+    }
   };
 
+  const handleAddShip = (newShip) => {
+    try {
+      const updatedShips = [...rows, { ...newShip, id: 's' + Date.now() }];
+      Cookies.set('ships', JSON.stringify(updatedShips));
+      setRows(updatedShips);
+      setOpenAddForm(false);
+      toast.success('New ship added successfully.');
+    } catch (err) {
+      console.error('Add ship failed', err);
+      toast.error('Failed to add new ship.');
+    }
+  };
 
   const columns = [
     { field: 'name', headerName: 'Name', flex: 1, headerClassName: 'super-app-theme--header' },
@@ -66,11 +92,10 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
         params.value === 'Active'
           ? 'status-active'
           : params.value === 'Under Maintenance'
-            ? 'status-maintenance'
-            : params.value === 'Inactive'
-              ? 'status-inactive'
-              : '',
-
+          ? 'status-maintenance'
+          : params.value === 'Inactive'
+          ? 'status-inactive'
+          : '',
     },
     {
       field: 'actions',
@@ -92,10 +117,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete">
-            <IconButton size="small" onClick={() => {
-              handleDelete(params.row.id, setRows)
-            }
-            }>
+            <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
               <DeleteIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
@@ -106,9 +128,25 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
 
   return (
     <div style={{ width: '100%' }}>
-      <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 1 }}>
-        Ships
-      </Typography>
+      <div className="headingContainer">
+        <Typography variant="h6" className="headingTitle">
+          Ships
+        </Typography>
+        <Button
+          variant="outlined"
+          sx={{
+            fontWeight: 'bold',
+            fontSize: '1rem',
+            padding: '6px 16px',
+            borderWidth: '3px',
+            textTransform: 'none',
+          }}
+          onClick={() => setOpenAddForm(true)}
+        >
+          Add Ship
+        </Button>
+      </div>
+
       <Paper sx={{ width: '98%' }}>
         <DataGrid
           rows={rows}
@@ -118,7 +156,6 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           initialState={{
             pagination: { paginationModel: { pageSize: 5, page: 0 } },
           }}
-          // checkboxSelection
           sx={{
             border: 0,
             '& .super-app-theme--header': {
@@ -140,6 +177,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           }}
         />
       </Paper>
+
       {editingShip && (
         <ShipEditForm
           ship={editingShip}
@@ -147,6 +185,15 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           onCancel={handleCancelEdit}
         />
       )}
+      {openAddForm && (
+        <ShipEditForm
+          ship={null}
+          onSave={handleAddShip}
+          onCancel={() => setOpenAddForm(false)}
+        />
+      )}
+
+      <ToastContainer />
     </div>
   );
 }

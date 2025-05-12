@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Save, X } from 'lucide-react';
 import '../../styles/HomeShip.css';
+import Cookies from 'js-cookie';
 
-const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
+const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
+    shipId: '',
+    componentId: '',
     type: '',
     priority: '',
     status: '',
@@ -11,15 +14,25 @@ const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
     scheduledDate: '',
   });
 
+  const priorities = ['High', 'Medium', 'Low'];
+  const statuses = ['Open', 'Progress', 'Closed', 'Completed'];
+  const [shipOptions, setShipOptions] = useState(); 
+  const [componentOptions, setComponentOptions] = useState();
+
   useEffect(() => {
     if (job) {
       setFormData({
+        shipId: job.shipId || '',
+        componentId: job.componentId || '',
         type: job.type || '',
         priority: job.priority || '',
         status: job.status || '',
         assignedEngineerId: job.assignedEngineerId || '',
         scheduledDate: job.scheduledDate || '',
       });
+    }else{
+      setShipOptions(JSON.parse(Cookies.get('ships')));
+      setComponentOptions(JSON.parse(Cookies.get('components')))
     }
   }, [job]);
 
@@ -33,7 +46,11 @@ const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave({ ...job, ...formData });
+    const payload = {
+      ...formData,
+      id: isAddMode ? `job-${Date.now()}` : job.id,
+    };
+    onSave(payload);
   };
 
   return (
@@ -45,8 +62,47 @@ const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
             <X size={20} />
           </button>
         </div>
-
         <form onSubmit={handleSubmit} className="ship-edit-form">
+          {isAddMode && (
+            <>
+              <div className="form-group">
+                <label htmlFor="shipId">Ship ID</label>
+                <select
+                  id="shipId"
+                  name="shipId"
+                  value={formData.shipId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Ship</option>
+                  {shipOptions && shipOptions.map((ship) => (
+                    <option key={ship.id} value={ship.id}>
+                      {ship.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="componentId">Component</label>
+                <select
+                  id="componentId"
+                  name="componentId"
+                  value={formData.componentId}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Component</option>
+                  {componentOptions && componentOptions.map((comp) => (
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
           <div className="form-group">
             <label htmlFor="type">Job Type</label>
             <input
@@ -61,14 +117,18 @@ const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
 
           <div className="form-group">
             <label htmlFor="priority">Priority</label>
-            <input
-              type="text"
+            <select
               id="priority"
               name="priority"
               value={formData.priority}
               onChange={handleChange}
               required
-            />
+            >
+              <option value="">Priority</option>
+              {priorities.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -81,12 +141,10 @@ const ShipsJobEditForm = ({ job, onSave, onCancel }) => {
               required
             >
               <option value="">Select Status</option>
-              <option value="Open">Open</option>
-              <option value="Closed">Closed</option>
-              <option value="Progress">Progress</option>
-              <option value="Completed">Completed</option>
+              {statuses.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
-
           </div>
 
           <div className="form-group">

@@ -298,3 +298,33 @@
   color: grey;
 }
 
+
+/* add button */
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width:98%;
+  margin-bottom: 0.5rem;
+}
+
+.headingTitle {
+  font-weight: bold;
+}
+
+.addButton {
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.addButton:hover {
+  background-color: #115293;
+}
+
+
