@@ -1,0 +1,300 @@
+.ship-edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.ship-edit-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.ship-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.ship-edit-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.close-button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Form Styles */
+.ship-edit-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #555;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.save-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+}
+
+.save-button:hover {
+  background-color: #1565c0;
+}
+
+.divisonLine {
+  width: 80%;
+  height: 2px;
+  /* background-color: #dfdfdf; */
+  margin: 24px auto;
+}
+
+/* Ship History css*/
+
+.shipHistoryContainer {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 98%;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Left side - Ship details section */
+.ship-details-card {
+  border-radius: 4px;
+  padding: 20px 16px 16px 16px;
+  /* width: 100%; */
+  box-sizing: border-box;
+}
+
+.ship-details-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background-color: #eee;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.detail-label {
+  font-size: 15px;
+  color: #666;
+  font-weight: normal;
+  margin: 0;
+}
+
+.detail-value {
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .detail-item {
+    flex-direction: row; /* Keep horizontal layout even on small screens */
+  }
+
+  .icon-container {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Container for demo purposes */
+.page-container {
+  min-height: 100vh;
+  background-color: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+
+/* Right side - Table section (empty for manual implementation) */
+.tableSection {
+  flex: 3;
+  padding: 20px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  border-left: 1px solid rgb(211, 211, 211);
+}
+
+.emptyTableSection {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-style: italic;
+  border: 2px dashed #eee;
+  border-radius: 6px;
+}
+
+.shipDetailsSection{
+  flex:1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .shipHistoryContainer {
+    flex-direction: column;
+  }
+
+  .shipDetailsSection,
+  .tableSection {
+    flex: 1;
+    width: 100%;
+  }
+
+  .shipDetailsSection {
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .shipTable th,
+  .shipTable td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+}
+
+/* ship icon on home page */
+.placeholder-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10rem;
+  opacity: 0.3;
+}
+
+.placeholder-icon svg {
+  font-size: 10rem;
+  color: grey;
+}
+

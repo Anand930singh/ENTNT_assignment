@@ -1,39 +1,51 @@
-"use client"
-
 import { useState } from "react"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import "../styles/authentication.css"
+import { useNavigate } from "react-router-dom"
+import Users from '../data/users.json'
+import Cookies from 'js-cookie';
 
 function SignInForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [userType, setUserType] = useState("admin")
+  const [userType, setUserType] = useState("Admin")
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const storeLoginData = (userData) =>{
+    const expiryDate = new Date(new Date().getTime() + 20 * 60 * 1000);
+    Cookies.set("user", JSON.stringify({id: userData.id, role:userData.role, email: userData.email }), {expires:expiryDate})
+  }
+
+  const authenticateUser = (e) =>{
+    const usersData = Users.users;
+    for(const value of usersData){
+      if(value.role===userType && value.email === email && value.password === password){
+        storeLoginData(value);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-
-    // Simulate authentication
+    const boolAuth =await authenticateUser();
     setTimeout(() => {
-      console.log("Signing in as:", userType, email, password)
-
-      // Example of showing different toasts based on user type
-      if (email && password) {
+      if (email && password && boolAuth) {
+        navigate('/home')
         toast.success(`Successfully signed in as ${userType}`)
       } else {
-        toast.error("Please fill in all required fields")
+        toast.error("Sorry, looks like that's the wrong email or password.")
       }
-
       setIsLoading(false)
     }, 1000)
   }
 
   return (
     <div className="sign-in-container">
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar newestOnTop closeOnClick />
-
       <div className="sign-in-card">
         <div className="sign-in-header">
           <h1>Sign in</h1>
@@ -41,18 +53,18 @@ function SignInForm() {
         </div>
 
         <div className="user-type-tabs">
-          <button className={`tab-button ${userType === "admin" ? "active" : ""}`} onClick={() => setUserType("admin")}>
+          <button className={`tab-button ${userType === "Admin" ? "active" : ""}`} onClick={() => setUserType("Admin")}>
             Admin
           </button>
           <button
-            className={`tab-button ${userType === "inspector" ? "active" : ""}`}
-            onClick={() => setUserType("inspector")}
+            className={`tab-button ${userType === "Inspector" ? "active" : ""}`}
+            onClick={() => setUserType("Inspector")}
           >
             Inspector
           </button>
           <button
-            className={`tab-button ${userType === "engineer" ? "active" : ""}`}
-            onClick={() => setUserType("engineer")}
+            className={`tab-button ${userType === "Engineer" ? "active" : ""}`}
+            onClick={() => setUserType("Engineer")}
           >
             Engineer
           </button>

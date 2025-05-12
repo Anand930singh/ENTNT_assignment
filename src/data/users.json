@@ -1,0 +1,80 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "role": "Admin",
+      "email": "admin@entnt.in",
+      "password": "admin123"
+    },
+    {
+      "id": "2",
+      "role": "Inspector",
+      "email": "inspector@entnt.in",
+      "password": "inspect123"
+    },
+    {
+      "id": "3",
+      "role": "Engineer",
+      "email": "engineer@entnt.in",
+      "password": "engine123"
+    }
+  ],
+  "ships": [
+    { "id": "s1", "name": "Ever Given", "imo": "9811000", "flag": "Panama", "status": "Active" },
+    { "id": "s2", "name": "Maersk Alabama", "imo": "9164263", "flag": "USA", "status": "Under Maintenance" },
+    { "id": "s3", "name": "Ocean Giant", "imo": "9100003", "flag": "UK", "status": "Active" },
+    { "id": "s4", "name": "Poseidon King", "imo": "9200004", "flag": "Greece", "status": "Inactive" },
+    { "id": "s5", "name": "Neptune Star", "imo": "9300005", "flag": "India", "status": "Active" },
+    { "id": "s6", "name": "Titanic II", "imo": "9400006", "flag": "Canada", "status": "Active" },
+    { "id": "s7", "name": "Liberty Voyager", "imo": "9500007", "flag": "Germany", "status": "Under Maintenance" },
+    { "id": "s8", "name": "Sea Explorer", "imo": "9600008", "flag": "Norway", "status": "Active" },
+    { "id": "s9", "name": "Atlantic Queen", "imo": "9700009", "flag": "France", "status": "Inactive" },
+    { "id": "s10", "name": "Arctic Storm", "imo": "9800010", "flag": "Russia", "status": "Active" }
+  ],
+  "components": [
+    { "id": "c1", "shipId": "s1", "name": "Main Engine", "serialNumber": "ME-1234", "installDate": "2020-01-10", "lastMaintenanceDate": "2024-03-12" },
+    { "id": "c2", "shipId": "s1", "name": "Radar", "serialNumber": "RAD-5678", "installDate": "2021-02-14", "lastMaintenanceDate": "2024-01-12" },
+    { "id": "c3", "shipId": "s1", "name": "Pump", "serialNumber": "PMP-1111", "installDate": "2019-11-20", "lastMaintenanceDate": "2024-02-10" },
+    { "id": "c4", "shipId": "s1", "name": "Steering Gear", "serialNumber": "SG-9999", "installDate": "2018-08-08", "lastMaintenanceDate": "2024-04-01" },
+
+    { "id": "c5", "shipId": "s2", "name": "Main Engine", "serialNumber": "ME-5678", "installDate": "2021-03-20", "lastMaintenanceDate": "2023-11-10" },
+    { "id": "c6", "shipId": "s2", "name": "Generator", "serialNumber": "GEN-5678", "installDate": "2020-04-01", "lastMaintenanceDate": "2023-12-20" },
+    { "id": "c7", "shipId": "s2", "name": "Navigation", "serialNumber": "NAV-0012", "installDate": "2019-07-14", "lastMaintenanceDate": "2023-10-01" },
+    { "id": "c8", "shipId": "s2", "name": "Fuel System", "serialNumber": "FUEL-1001", "installDate": "2021-01-01", "lastMaintenanceDate": "2023-09-01" },
+
+    { "id": "c9", "shipId": "s3", "name": "Radar", "serialNumber": "RAD-2222", "installDate": "2021-01-10", "lastMaintenanceDate": "2024-01-10" },
+    { "id": "c10", "shipId": "s3", "name": "Engine 2", "serialNumber": "ENG2-002", "installDate": "2021-01-15", "lastMaintenanceDate": "2024-01-12" },
+
+    { "id": "c11", "shipId": "s4", "name": "Pump", "serialNumber": "PUMP-0001", "installDate": "2020-10-10", "lastMaintenanceDate": "2023-10-10" },
+    { "id": "c12", "shipId": "s4", "name": "Gearbox", "serialNumber": "GB-8765", "installDate": "2021-03-22", "lastMaintenanceDate": "2023-12-01" },
+
+    { "id": "c13", "shipId": "s5", "name": "Anchor", "serialNumber": "ANCH-2345", "installDate": "2022-05-10", "lastMaintenanceDate": "2024-03-15" },
+    { "id": "c14", "shipId": "s5", "name": "Radio", "serialNumber": "RADIO-999", "installDate": "2022-06-10", "lastMaintenanceDate": "2024-03-01" },
+
+    { "id": "c15", "shipId": "s6", "name": "Hull Sensor", "serialNumber": "HS-001", "installDate": "2020-11-11", "lastMaintenanceDate": "2024-02-22" },
+
+    { "id": "c16", "shipId": "s7", "name": "Winch", "serialNumber": "WINCH-0002", "installDate": "2019-06-12", "lastMaintenanceDate": "2023-08-01" },
+    { "id": "c17", "shipId": "s7", "name": "Fire System", "serialNumber": "FS-123", "installDate": "2018-04-09", "lastMaintenanceDate": "2023-07-15" },
+
+    { "id": "c18", "shipId": "s8", "name": "Fuel Pump", "serialNumber": "FP-231", "installDate": "2023-01-01", "lastMaintenanceDate": "2024-01-01" },
+
+    { "id": "c19", "shipId": "s9", "name": "Cooling Fan", "serialNumber": "CF-111", "installDate": "2020-10-10", "lastMaintenanceDate": "2023-12-01" },
+
+    { "id": "c20", "shipId": "s10", "name": "Navigation", "serialNumber": "NAV-101", "installDate": "2019-12-12", "lastMaintenanceDate": "2023-12-31" }
+  ],
+  "jobs": [
+    { "id": "j1", "componentId": "c1", "shipId": "s1", "type": "Inspection", "priority": "High", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-05-05" },
+    { "id": "j2", "componentId": "c2", "shipId": "s1", "type": "Repair", "priority": "Medium", "status": "In Progress", "assignedEngineerId": "3", "scheduledDate": "2025-05-10" },
+    { "id": "j3", "componentId": "c3", "shipId": "s1", "type": "Replacement", "priority": "Low", "status": "Completed", "assignedEngineerId": "3", "scheduledDate": "2025-04-20" },
+    { "id": "j4", "componentId": "c5", "shipId": "s2", "type": "Inspection", "priority": "High", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-06-01" },
+    { "id": "j5", "componentId": "c6", "shipId": "s2", "type": "Repair", "priority": "Medium", "status": "In Progress", "assignedEngineerId": "3", "scheduledDate": "2025-06-10" },
+    { "id": "j6", "componentId": "c9", "shipId": "s3", "type": "Inspection", "priority": "Low", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-05-01" },
+    { "id": "j7", "componentId": "c11", "shipId": "s4", "type": "Repair", "priority": "High", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-07-01" },
+    { "id": "j8", "componentId": "c13", "shipId": "s5", "type": "Maintenance", "priority": "Low", "status": "Completed", "assignedEngineerId": "3", "scheduledDate": "2025-03-01" },
+    { "id": "j9", "componentId": "c15", "shipId": "s6", "type": "Inspection", "priority": "Medium", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-08-01" },
+    { "id": "j10", "componentId": "c17", "shipId": "s7", "type": "Repair", "priority": "High", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-09-01" },
+    { "id": "j11", "componentId": "c18", "shipId": "s8", "type": "Maintenance", "priority": "Low", "status": "Completed", "assignedEngineerId": "3", "scheduledDate": "2025-02-15" },
+    { "id": "j12", "componentId": "c19", "shipId": "s9", "type": "Repair", "priority": "Medium", "status": "In Progress", "assignedEngineerId": "3", "scheduledDate": "2025-04-12" },
+    { "id": "j13", "componentId": "c20", "shipId": "s10", "type": "Inspection", "priority": "High", "status": "Open", "assignedEngineerId": "3", "scheduledDate": "2025-03-25" }
+  ]
+}
