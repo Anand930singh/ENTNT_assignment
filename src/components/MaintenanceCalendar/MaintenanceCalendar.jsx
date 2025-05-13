@@ -3,7 +3,8 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Cookies from 'js-cookie';
-import JobsOnDateTable from './JobsOnDateTable'; // Make sure path is correct
+import JobsOnDateTable from './JobsOnDateTable';
+import '../../styles/MaintenanceCalendar.css'
 
 const localizer = momentLocalizer(moment);
 
@@ -31,17 +32,16 @@ const MaintenanceCalendar = () => {
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <div style={{ height: '70vh' }}>
+    <div className="calendar-container">
+      <div className="calendar-wrapper">
         <Calendar
           localizer={localizer}
           events={myEventsList}
           startAccessor="start"
           endAccessor="end"
           defaultView="month"
-          defaultDate={new Date()} // Can set a specific date if needed
+          defaultDate={new Date()}
           views={['month', 'week']}
-          style={{ height: '100%' }}
           popup
           selectable
           toolbar
@@ -65,9 +65,7 @@ const MaintenanceCalendar = () => {
         />
       </div>
 
-      {selectedDate && (
-        <JobsOnDateTable selectedDate={selectedDate} />
-      )}
+      {selectedDate && <JobsOnDateTable selectedDate={selectedDate} />}
     </div>
   );
 };

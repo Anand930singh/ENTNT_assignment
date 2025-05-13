@@ -4,6 +4,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Cookies from 'js-cookie';
 import moment from 'moment';
+import '../../styles/MaintenanceCalendar.css'
 
 export default function JobsOnDateTable({ selectedDate }) {
   const jobData = JSON.parse(Cookies.get('jobs') || '[]');
@@ -22,7 +23,7 @@ export default function JobsOnDateTable({ selectedDate }) {
   ];
 
   return (
-    <div style={{ marginTop: '20px', width: '100%' }}>
+    <div className="jobs-table" >
       <Typography variant="h6" gutterBottom>
         Jobs on {formattedDate}
       </Typography>
@@ -30,16 +31,22 @@ export default function JobsOnDateTable({ selectedDate }) {
       {filteredJobs.length === 0 ? (
         <Typography>No jobs scheduled for this date.</Typography>
       ) : (
-        <Paper>
+        <Paper sx={{ width: '100%' }}>
           <DataGrid
             rows={filteredJobs}
             columns={columns}
             getRowId={(row) => row.id}
-            pageSizeOptions={[5]}
+            pageSizeOptions={[5, 10]}
             initialState={{
               pagination: { paginationModel: { pageSize: 5, page: 0 } },
             }}
-            autoHeight
+            sx={{
+              border: 0,
+              '& .super-app-theme--header': {
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              },
+            }}
           />
         </Paper>
       )}
