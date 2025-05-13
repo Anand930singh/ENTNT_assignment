@@ -1,0 +1,63 @@
+.calendar-container {
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.calendar-wrapper {
+  height: 70vh;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.jobs-table {
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .calendar-wrapper {
+    height: 60vh;
+  }
+
+  .jobs-table {
+    margin-top: 1rem;
+  }
+
+  .rbc-toolbar button {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .rbc-event {
+    font-size: 0.75rem;
+  }
+
+  .MuiDataGrid-root {
+    font-size: 0.8rem;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .rbc-toolbar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .rbc-toolbar-label {
+    font-size: 1rem;
+  }
+
+  .rbc-event {
+    font-size: 0.7rem;
+  }
+
+  .MuiDataGrid-root {
+    font-size: 0.7rem;
+  }
+}

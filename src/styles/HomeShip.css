@@ -1,3 +1,7 @@
+.navBar{
+  display:flex;
+  flex-direction: row;
+}
 .ship-edit-overlay {
   position: fixed;
   top: 0;

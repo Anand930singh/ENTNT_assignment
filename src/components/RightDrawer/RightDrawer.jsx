@@ -23,6 +23,14 @@ import '../../styles/HomeShip.css'
 import ShipsComponentManagement from '../ShipsComponentManagement/ShipsComponentManagement'
 import ShipsJobsManagement from '../ShipsJobsManagement/ShipsJobsManagement';
 import MaintenanceCalendar from '../MaintenanceCalendar/MaintenanceCalendar';
+import Dashboard from '../Dashboard/Dashboard';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
+import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
+import BuildIcon from '@mui/icons-material/Build';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ProfileIcon from './ProfileIcon';
+
 
 const drawerWidth = 240;
 
@@ -104,8 +112,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const sectionIcons = {
+  dashboard: <DashboardIcon />,
+  ships: <DirectionsBoatIcon />,
+  shipComponents: <SettingsApplicationsIcon />,
+  maintenanceJobs: <BuildIcon />,
+  maintenanceCalendar: <CalendarMonthIcon />,
+};
+
 export default function RightDrawer() {
-  const [selectedSection, setSelectedSelection] = React.useState("ships");
+  const [selectedSection, setSelectedSelection] = React.useState("dashboard");
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -120,8 +136,8 @@ export default function RightDrawer() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
+      <AppBar position="fixed" open={open} className='navBar'>
+        <Toolbar sx={{ width: '100%' }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -139,6 +155,11 @@ export default function RightDrawer() {
           <Typography variant="h6" noWrap component="div">
             Ship Maintenance Dashboard
           </Typography>
+
+          {/* Push ProfileIcon to the right */}
+          <Box sx={{ ml: 'auto' }}>
+            <ProfileIcon />
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -150,84 +171,42 @@ export default function RightDrawer() {
         <Divider />
         <List>
           {[
+            { label: 'Dashboard', value: 'dashboard' },
             { label: 'Ships', value: 'ships' },
             { label: 'Ship Components', value: 'shipComponents' },
-            { label: 'Maintenance Jobs', value: 'maintenanceJobs' }
+            { label: 'Maintenance Jobs', value: 'maintenanceJobs' },
+            { label: 'Maintenance Calendar', value: 'maintenanceCalendar' },
           ].map((item, index) => (
             <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                onClick={() => setSelectedSelection(item.value)}
-                sx={[
-                  { minHeight: 48, px: 2.5 },
-                  open ? { justifyContent: 'initial' } : { justifyContent: 'center' }
-                ]}
-              >
-                <ListItemIcon
-                  sx={[
-                    { minWidth: 0, justifyContent: 'center' },
-                    open ? { mr: 3 } : { mr: 'auto' }
-                  ]}
-                >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.label}
-                  sx={[open ? { opacity: 1 } : { opacity: 0 }]}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {[{ label: 'Maintenance Calendar', value: 'maintenanceCalendar' },
-            { label: 'Ship Components', value: 'shipComponents' },
-            { label: 'Maintenance Jobs', value: 'maintenanceJobs' }].map((item, index) => (
-            <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+                selected={selectedSection === item.value}
                 onClick={() => setSelectedSelection(item.value)}
                 sx={[
                   {
                     minHeight: 48,
                     px: 2.5,
+                    color: selectedSection === item.value ? 'primary.main' : 'inherit',
                   },
-                  open
-                    ? {
-                      justifyContent: 'initial',
-                    }
-                    : {
-                      justifyContent: 'center',
-                    },
+                  open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
                 ]}
               >
                 <ListItemIcon
                   sx={[
                     {
-                      minWidth: 0,
-                      justifyContent: 'center',
+                      minWidth: 0, justifyContent: 'center',
+                      color: selectedSection === item.value ? 'primary.main' : 'grey',
+
                     },
-                    open
-                      ? {
-                        mr: 3,
-                      }
-                      : {
-                        mr: 'auto',
-                      },
+                    open ? { mr: 3 } : { mr: 'auto' },
+
                   ]}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {sectionIcons[item.value]}
                 </ListItemIcon>
+
                 <ListItemText
                   primary={item.label}
-                  sx={[
-                    open
-                      ? {
-                        opacity: 1,
-                      }
-                      : {
-                        opacity: 0,
-                      },
-                  ]}
+                  sx={[open ? { opacity: 1 } : { opacity: 0 }]}
                 />
               </ListItemButton>
             </ListItem>
@@ -240,14 +219,18 @@ export default function RightDrawer() {
           selectedSection === "ships" ? (<Typography sx={{ marginBottom: 2 }}>
             <ShipsManagement />
           </Typography>) : selectedSection === "shipComponents" ? (<Typography>
-            <ShipsComponentManagement/>
+            <ShipsComponentManagement />
           </Typography>) : selectedSection === "maintenanceJobs" ? (
             <Typography>
-              <ShipsJobsManagement/>
+              <ShipsJobsManagement />
             </Typography>
           ) : selectedSection === "maintenanceCalendar" ? (
             <Typography>
-              <MaintenanceCalendar/>
+              <MaintenanceCalendar />
+            </Typography>
+          ) : selectedSection === "dashboard" ? (
+            <Typography>
+              <Dashboard />
             </Typography>
           ) : <></>
         }
