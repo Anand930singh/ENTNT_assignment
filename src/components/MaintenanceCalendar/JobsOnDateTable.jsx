@@ -9,7 +9,9 @@ export default function JobsOnDateTable({ selectedDate }) {
   const jobData = JSON.parse(Cookies.get('jobs') || '[]');
   const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
 
-  const filteredJobs = jobData.filter(job => job.scheduledDate === formattedDate);
+  const filteredJobs = jobData.filter(
+    job => moment(job.scheduledDate).format('YYYY-MM-DD') === formattedDate
+  );
 
   const columns = [
     { field: 'type', headerName: 'Job Type', flex: 1 },
