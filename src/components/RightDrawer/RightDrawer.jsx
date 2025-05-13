@@ -22,6 +22,7 @@ import ShipsManagement from '../ShipsManagement/ShipsManagement';
 import '../../styles/HomeShip.css'
 import ShipsComponentManagement from '../ShipsComponentManagement/ShipsComponentManagement'
 import ShipsJobsManagement from '../ShipsJobsManagement/ShipsJobsManagement';
+import MaintenanceCalendar from '../MaintenanceCalendar/MaintenanceCalendar';
 
 const drawerWidth = 240;
 
@@ -179,9 +180,12 @@ export default function RightDrawer() {
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {[{ label: 'Maintenance Calendar', value: 'maintenanceCalendar' },
+            { label: 'Ship Components', value: 'shipComponents' },
+            { label: 'Maintenance Jobs', value: 'maintenanceJobs' }].map((item, index) => (
+            <ListItem key={item.label} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                onClick={() => setSelectedSelection(item.value)}
                 sx={[
                   {
                     minHeight: 48,
@@ -214,7 +218,7 @@ export default function RightDrawer() {
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
                 <ListItemText
-                  primary={text}
+                  primary={item.label}
                   sx={[
                     open
                       ? {
@@ -240,6 +244,10 @@ export default function RightDrawer() {
           </Typography>) : selectedSection === "maintenanceJobs" ? (
             <Typography>
               <ShipsJobsManagement/>
+            </Typography>
+          ) : selectedSection === "maintenanceCalendar" ? (
+            <Typography>
+              <MaintenanceCalendar/>
             </Typography>
           ) : <></>
         }
