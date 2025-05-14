@@ -9,7 +9,6 @@ function ShipsManagement() {
     const [selectedShipDetail, setSelectedShipDetail] = React.useState(null);
 
     React.useEffect(() => {
-        console.log(selectedShipDetail)
     }, [selectedShipDetail]);
     return (
         <>

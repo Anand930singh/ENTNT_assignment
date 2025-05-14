@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 export default function ShipMaintenanceHistory({ shipId }) {
   const [jobsData, setJobsData] = React.useState([]);
+  const jobReduxData = useSelector((state) => state.jobs.jobs || []);
+
 
   React.useEffect(() => {
-    const jobs = JSON.parse(Cookies.get('jobs') || '[]');
-    const filtered = jobs.filter(job => job.shipId === shipId);
+    const filtered = jobReduxData.filter(job => job.shipId === shipId);
     setJobsData(filtered);
   }, [shipId]);
 

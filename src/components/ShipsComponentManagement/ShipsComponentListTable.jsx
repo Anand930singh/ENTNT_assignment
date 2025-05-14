@@ -6,37 +6,25 @@ import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Typography } from '@mui/material';
-import Cookies from 'js-cookie';
-import ShipComponentEditForm from './ShipComponentEditForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  addComponent,
+  updateComponent,
+  removeComponent,
+} from '../../slice/componentSlice';
+import ShipComponentEditForm from './ShipComponentEditForm';
 
 export default function ShipsComponentListTable({ setSelectedComponentDetail }) {
-  const [rows, setRows] = React.useState([]);
+  const dispatch = useDispatch();
+  const rows = useSelector((state) => state.components.components);
   const [editingComponent, setEditingComponent] = React.useState(null);
   const [openAddForm, setOpenAddForm] = React.useState(false);
 
-  React.useEffect(() => {
-    const cookieData = Cookies.get('components');
-    if (cookieData) {
-      try {
-        setRows(JSON.parse(cookieData));
-      } catch (error) {
-        console.error('Failed to parse components cookie', error);
-        toast.error('Failed to load components. Please try again.');
-      }
-    }
-  }, []);
-
   const handleDelete = (id) => {
-    const cookieData = Cookies.get('components');
-    if (!cookieData) return;
-
     try {
-      const parsedData = JSON.parse(cookieData);
-      const updatedData = parsedData.filter((row) => row.id !== id);
-      Cookies.set('components', JSON.stringify(updatedData));
-      setRows(updatedData);
+      dispatch(removeComponent(id));
       toast.success('Component deleted successfully');
     } catch (err) {
       console.error('Delete failed', err);
@@ -53,11 +41,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
   };
 
   const handleSaveEdit = (updatedComponent) => {
-    const updatedRows = rows.map((row) =>
-      row.id === editingComponent.id ? { ...row, ...updatedComponent } : row
-    );
-    Cookies.set('components', JSON.stringify(updatedRows));
-    setRows(updatedRows);
+    dispatch(updateComponent(updatedComponent));
     setEditingComponent(null);
     toast.success('Component updated successfully');
   };
@@ -68,9 +52,8 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
 
   const handleSaveNewComponent = (newComponent) => {
     try {
-      const updatedComponents = [...rows, { ...newComponent, id: 'c' + Date.now() }];
-      Cookies.set('components', JSON.stringify(updatedComponents));
-      setRows(updatedComponents);
+      const newWithId = { ...newComponent, id: 'c' + Date.now() };
+      dispatch(addComponent(newWithId));
       setOpenAddForm(false);
       toast.success('Component added successfully');
     } catch (error) {

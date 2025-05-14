@@ -1,10 +1,11 @@
 import { useState } from "react"
 import { toast, ToastContainer } from "react-toastify"
+import { useSelector, useDispatch } from "react-redux"
 import "react-toastify/dist/ReactToastify.css"
 import "../styles/authentication.css"
 import { useNavigate } from "react-router-dom"
 import Users from '../data/users.json'
-import Cookies from 'js-cookie';
+import { login } from "../slice/authSlice"
 
 function SignInForm() {
   const [email, setEmail] = useState("")
@@ -12,16 +13,21 @@ function SignInForm() {
   const [userType, setUserType] = useState("Admin")
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const storeLoginData = (userData) =>{
-    const expiryDate = new Date(new Date().getTime() + 20 * 60 * 1000);
-    Cookies.set("user", JSON.stringify({id: userData.id, role:userData.role, email: userData.email }), {expires:expiryDate})
+  const storeLoginData = (userData) => {
+    dispatch(login({
+      id: userData.id,
+      email: userData.email,
+      role: userData.role,
+    }));
+    localStorage.setItem('user', JSON.stringify(userData));
   }
 
-  const authenticateUser = (e) =>{
+  const authenticateUser = (e) => {
     const usersData = Users.users;
-    for(const value of usersData){
-      if(value.role===userType && value.email === email && value.password === password){
+    for (const value of usersData) {
+      if (value.role === userType && value.email === email && value.password === password) {
         storeLoginData(value);
         return true;
       }
@@ -32,7 +38,7 @@ function SignInForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    const boolAuth =await authenticateUser();
+    const boolAuth = await authenticateUser();
     setTimeout(() => {
       if (email && password && boolAuth) {
         navigate('/home')

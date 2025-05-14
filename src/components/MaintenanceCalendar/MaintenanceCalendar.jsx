@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Cookies from 'js-cookie';
 import JobsOnDateTable from './JobsOnDateTable';
 import '../../styles/MaintenanceCalendar.css'
+import { useSelector } from 'react-redux';
 
 const localizer = momentLocalizer(moment);
 
 const MaintenanceCalendar = () => {
   const [myEventsList, setMyEventsList] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
+  const jobData = useSelector((state) => state.jobs.jobs || []);
 
   useEffect(() => {
-    const jobData = JSON.parse(Cookies.get('jobs') || '[]');
-
     const events = jobData.map(job => ({
       id: job.id,
       title: `${job.type} - Priority: ${job.priority}`,

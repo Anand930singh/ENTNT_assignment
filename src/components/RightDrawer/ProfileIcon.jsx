@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import '../../styles/ProfileIcon.css';
-import Cookies from 'js-cookie'
+import { useSelector } from 'react-redux';
 
 const ProfileIcon = () => {
-    const [email, setEmail] = useState(null);
-    useEffect(()=>{
-        setEmail(JSON.parse(Cookies.get('user')).email)
-    })
+    const email = useSelector((state) => state.auth.email);
 
     return (
         <div className="profile-icon">

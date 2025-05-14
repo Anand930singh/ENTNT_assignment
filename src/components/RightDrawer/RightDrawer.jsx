@@ -16,8 +16,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import ShipsManagement from '../ShipsManagement/ShipsManagement';
 import '../../styles/HomeShip.css'
 import ShipsComponentManagement from '../ShipsComponentManagement/ShipsComponentManagement'
@@ -30,6 +28,10 @@ import SettingsApplicationsIcon from '@mui/icons-material/SettingsApplications';
 import BuildIcon from '@mui/icons-material/Build';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ProfileIcon from './ProfileIcon';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { Button, Stack } from '@mui/material';
+import { logout } from '../../slice/authSlice';
 
 
 const drawerWidth = 240;
@@ -124,6 +126,13 @@ export default function RightDrawer() {
   const [selectedSection, setSelectedSelection] = React.useState("dashboard");
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -158,7 +167,17 @@ export default function RightDrawer() {
 
           {/* Push ProfileIcon to the right */}
           <Box sx={{ ml: 'auto' }}>
-            <ProfileIcon />
+            <Stack direction="row" spacing={2} alignItems="center">
+              <ProfileIcon />
+              <Button
+                variant="outlined"
+                color="inherit"
+                onClick={handleLogout}
+                sx={{ textTransform: 'none' }}
+              >
+                Logout
+              </Button>
+            </Stack>
           </Box>
         </Toolbar>
       </AppBar>
