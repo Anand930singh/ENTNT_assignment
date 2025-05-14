@@ -93,7 +93,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
     ),
   };
 
-  const columns = userRole === 'admin' ? [...baseColumns, adminActionsColumn] : baseColumns;
+  const columns = userRole === 'Admin' ? [...baseColumns, adminActionsColumn] : baseColumns;
 
 
   return (
@@ -102,7 +102,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
         <Typography variant="h6" className="headingTitle">
           Ship Components
         </Typography>
-        {userRole === "admin" && (<Button
+        {userRole === "Admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',

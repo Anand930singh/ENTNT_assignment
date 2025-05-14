@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Save, X } from "lucide-react"
 import "../../styles/HomeShip.css"
 
-const ShipEditForm = ({ ship, onSave, onCancel }) => {
+const ShipEditForm = ({ ship, onSave, onCancel, userRole }) => {
   const [formData, setFormData] = useState({
     name: "",
     imo: "",
@@ -16,7 +16,7 @@ const ShipEditForm = ({ ship, onSave, onCancel }) => {
     if (ship) {
       setFormData({
         name: ship.name || "",
-        imoNumber: ship.imo || "",
+        imo: ship.imo || "",
         flag: ship.flag || "",
         status: ship.status || "Active",
       })
@@ -36,6 +36,8 @@ const ShipEditForm = ({ ship, onSave, onCancel }) => {
     onSave(formData)
   }
 
+  const isInspector = userRole === "Inspector"
+
   return (
     <div className="ship-edit-overlay">
       <div className="ship-edit-container">
@@ -49,31 +51,54 @@ const ShipEditForm = ({ ship, onSave, onCancel }) => {
         <form onSubmit={handleSubmit} className="ship-edit-form">
           <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} required />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              disabled={isInspector}
+            />
           </div>
 
           <div className="form-group">
-            <label htmlFor="imoNumber">IMO Number</label>
+            <label htmlFor="imo">IMO Number</label>
             <input
               type="text"
-              id="imoNumber"
+              id="imo"
               name="imo"
-              value={formData.imoNumber}
+              value={formData.imo}
               onChange={handleChange}
               required
               pattern="[0-9]+"
               title="IMO Number must contain only numbers"
+              disabled={isInspector}
             />
           </div>
 
           <div className="form-group">
             <label htmlFor="flag">Flag</label>
-            <input type="text" id="flag" name="flag" value={formData.flag} onChange={handleChange} required />
+            <input
+              type="text"
+              id="flag"
+              name="flag"
+              value={formData.flag}
+              onChange={handleChange}
+              required
+              disabled={isInspector}
+            />
           </div>
 
           <div className="form-group">
             <label htmlFor="status">Status</label>
-            <select id="status" name="status" value={formData.status} onChange={handleChange} required>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              required
+            >
               <option value="Active">Active</option>
               <option value="Under Maintenance">Under Maintenance</option>
               <option value="Inactive">Out of Service</option>
@@ -94,6 +119,5 @@ const ShipEditForm = ({ ship, onSave, onCancel }) => {
     </div>
   )
 }
-
 
 export default ShipEditForm
