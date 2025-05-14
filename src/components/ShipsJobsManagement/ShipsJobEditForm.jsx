@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Save, X } from 'lucide-react';
 import '../../styles/HomeShip.css';
-import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
@@ -18,6 +18,9 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
   const statuses = ['Open', 'Progress', 'Closed', 'Completed'];
   const [shipOptions, setShipOptions] = useState(); 
   const [componentOptions, setComponentOptions] = useState();
+  const shipsReduxData = useSelector((state) => state.ships.ships || []);
+  const componentReduxData = useSelector((state) => state.components.components || []);
+
 
   useEffect(() => {
     if (job) {
@@ -31,8 +34,8 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
         scheduledDate: job.scheduledDate || '',
       });
     }else{
-      setShipOptions(JSON.parse(Cookies.get('ships')));
-      setComponentOptions(JSON.parse(Cookies.get('components')))
+      setShipOptions(shipsReduxData);
+      setComponentOptions(componentReduxData)
     }
   }, [job]);
 
@@ -48,7 +51,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
     e.preventDefault();
     const payload = {
       ...formData,
-      id: isAddMode ? `job-${Date.now()}` : job.id,
+      id: isAddMode ? `j${Date.now()}` : job.id,
     };
     onSave(payload);
   };

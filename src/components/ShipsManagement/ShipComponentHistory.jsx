@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 export default function ShipComponenetHistory({ shipId }) {
   const [componentsData, setComponentsData] = React.useState([]);
+  const componentReduxData = useSelector((state) => state.components.components || []);
+
 
   React.useEffect(() => {
-    const components = JSON.parse(Cookies.get('components') || '[]');
-    const filtered = components.filter(item => item.shipId === shipId);
+    const filtered = componentReduxData.filter(item => item.shipId === shipId);
     setComponentsData(filtered);
   }, [shipId]);
 

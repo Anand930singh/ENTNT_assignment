@@ -5,14 +5,17 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Cookies from 'js-cookie';
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
 import ShipsJobEditForm from './ShipsJobEditForm';
-import Button from '@mui/material/Button';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addJob, updateJob, removeJob, setJobs } from '../../slice/jobSlice';
 
 export default function ShipsJobsListTable() {
+  const dispatch = useDispatch();
+  const jobsReduxData = useSelector((state) => state.jobs.jobs || []);
+
   const [rows, setRows] = React.useState([]);
   const [editingJob, setEditingJob] = React.useState(null);
   const [addingJob, setAddingJob] = React.useState(false);
@@ -25,8 +28,8 @@ export default function ShipsJobsListTable() {
   const handleSaveAdd = (newJob) => {
     try {
       const updatedRows = [...rows, newJob];
-      Cookies.set('jobs', JSON.stringify(updatedRows));
       setRows(updatedRows);
+      dispatch(addJob(newJob));
       toast.success('Job added successfully!');
     } catch (err) {
       console.error('Failed to add job', err);
@@ -36,27 +39,27 @@ export default function ShipsJobsListTable() {
     }
   };
 
-  React.useEffect(() => {
+  const handleSaveEdit = (updatedJob) => {
     try {
-      const cookieData = Cookies.get('jobs');
-      if (cookieData) {
-        setRows(JSON.parse(cookieData));
-      }
-    } catch (error) {
-      console.error('Failed to parse jobs cookie', error);
-      toast.error('Error loading saved jobs!');
+      const updatedRows = rows.map((row) =>
+        row.id === editingJob.id ? { ...row, ...updatedJob } : row
+      );
+      setRows(updatedRows);
+      dispatch(updateJob({ ...editingJob, ...updatedJob }));
+      toast.success('Job updated successfully!');
+    } catch (err) {
+      console.error('Edit failed', err);
+      toast.error('Failed to update job!');
+    } finally {
+      setEditingJob(null);
     }
-  }, []);
+  };
 
   const handleDelete = (id) => {
     try {
-      const cookieData = Cookies.get('jobs');
-      if (!cookieData) return;
-
-      const parsedData = JSON.parse(cookieData);
-      const updatedData = parsedData.filter((row) => row.id !== id);
-      Cookies.set('jobs', JSON.stringify(updatedData));
+      const updatedData = rows.filter((row) => row.id !== id);
       setRows(updatedData);
+      dispatch(removeJob(id));
       toast.success('Job deleted successfully!');
     } catch (err) {
       console.error('Delete failed', err);
@@ -68,25 +71,23 @@ export default function ShipsJobsListTable() {
     setEditingJob(job);
   };
 
-  const handleCancelEdit = () => {
-    setEditingJob(null);
-  };
-
-  const handleSaveEdit = (updatedJob) => {
+  React.useEffect(() => {
     try {
-      const updatedRows = rows.map((row) =>
-        row.id === editingJob.id ? { ...row, ...updatedJob } : row
-      );
-      Cookies.set('jobs', JSON.stringify(updatedRows));
-      setRows(updatedRows);
-      toast.success('Job updated successfully!');
-    } catch (err) {
-      console.error('Edit failed', err);
-      toast.error('Failed to update job!');
-    } finally {
-      setEditingJob(null);
+      if (jobsReduxData.length > 0) {
+        setRows(jobsReduxData);
+      } else {
+        dispatch(setJobs(jobsReduxData));
+        setRows(jobsReduxData);
+      }
+    } catch (error) {
+      console.error('Failed to parse jobs cookie', error);
+      toast.error('Error loading saved jobs!');
     }
-  };
+  }, []);
+
+  React.useEffect(() => {
+    setRows(jobsReduxData);
+  }, [jobsReduxData]);
 
   const columns = [
     { field: 'type', headerName: 'Job Type', flex: 1, headerClassName: 'super-app-theme--header' },
@@ -103,7 +104,6 @@ export default function ShipsJobsListTable() {
           Progress: '#f57c00',
           Completed: '#2e7d32',
         };
-
         return (
           <span style={{ color: statusColorMap[params.value] || '#000', fontWeight: 600 }}>
             {params.value}
@@ -139,7 +139,7 @@ export default function ShipsJobsListTable() {
 
   return (
     <div style={{ width: '100%' }}>
-      <div className="headingContainer">
+      <div className="headingContainer" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
         <Typography variant="h6" className="headingTitle">
           Ship Jobs
         </Typography>

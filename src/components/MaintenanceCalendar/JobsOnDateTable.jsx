@@ -2,12 +2,12 @@ import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Cookies from 'js-cookie';
 import moment from 'moment';
 import '../../styles/MaintenanceCalendar.css'
+import { useSelector } from 'react-redux';
 
 export default function JobsOnDateTable({ selectedDate }) {
-  const jobData = JSON.parse(Cookies.get('jobs') || '[]');
+  const jobData = useSelector((state) => state.jobs.jobs || []);
   const formattedDate = moment(selectedDate).format('YYYY-MM-DD');
 
   const filteredJobs = jobData.filter(

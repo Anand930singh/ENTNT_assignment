@@ -1,72 +1,52 @@
-import { useEffect, useState } from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
-import { Ship, Clock, PenTool, CheckCircle, Anchor, Calendar, LayoutDashboard, Settings, LogOut } from "lucide-react"
-import Cookies from "js-cookie"
-import moment from "moment"
-import '../../styles/Dashboard.css'
+import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { Ship, Clock, PenTool, CheckCircle } from "lucide-react";
+import moment from "moment";
+import '../../styles/Dashboard.css';
 
 function Dashboard() {
+    const reduxShips = useSelector((state) => state.ships.data);
+    const reduxComponents = useSelector((state) => state.components.data);
+    const reduxJobs = useSelector((state) => state.jobs.data);
 
-    const [totalShips, setTotalShips] = useState(0)
-    const [overdueComponents, setOverdueComponents] = useState(0)
-    const [jobsInProgress, setJobsInProgress] = useState(0)
-    const [jobsCompleted, setJobsCompleted] = useState(0)
+    const [ships, setShips] = useState([]);
+    const [components, setComponents] = useState([]);
+    const [jobs, setJobs] = useState([]);
 
     useEffect(() => {
-        try {
-            const ships = JSON.parse(Cookies.get("ships") || "[]")
-            const components = JSON.parse(Cookies.get("components") || "[]")
-            const jobs = JSON.parse(Cookies.get("jobs") || "[]")
+        const loadData = (key, reduxData) => {
+            const local = localStorage.getItem(key);
+            return local ? JSON.parse(local) : reduxData || [];
+        };
 
-            setTotalShips(ships.length || 10)
+        setShips(loadData("ships", reduxShips));
+        setComponents(loadData("components", reduxComponents));
+        setJobs(loadData("jobs", reduxJobs));
+    }, [reduxShips, reduxComponents, reduxJobs]);
 
-            const today = moment()
-            const overdue = components.filter((c) => moment(c.lastMaintenanceDate).isBefore(today))
-            setOverdueComponents(overdue.length || 20)
+    const { totalShips, overdueComponents, jobStatusCount } = useMemo(() => {
+        const totalShips = ships.length;
 
-            const inProgress = jobs.filter((j) => j.status.toLowerCase() === "in progress").length
-            const completed = jobs.filter((j) => j.status.toLowerCase() === "completed").length
+        const overdueComponents = components.filter(c =>
+            moment(c.lastMaintenanceDate).isBefore(moment())
+        ).length;
 
-            setJobsInProgress(inProgress || 3)
-            setJobsCompleted(completed || 3)
-        } catch (error) {
-            // If cookies aren't available, use mock data
-            setTotalShips(10)
-            setOverdueComponents(20)
-            setJobsInProgress(3)
-            setJobsCompleted(3)
-        }
-    }, [])
+        const jobStatusCount = jobs.reduce((acc, job) => {
+            const status = job.status?.toLowerCase() || "unknown";
+            acc[status] = (acc[status] || 0) + 1;
+            return acc;
+        }, {});
+
+        return { totalShips, overdueComponents, jobStatusCount };
+    }, [ships, components, jobs]);
 
     const chartData = [
-        { name: "In Progress", value: jobsInProgress, color: "#ffca28" },
-        { name: "Completed", value: jobsCompleted, color: "#66bb6a" },
-    ]
-
-    const renderCustomizedLabel = ({
-        cx, cy, midAngle, innerRadius, outerRadius, percent, index,
-    }) => {
-        const RADIAN = Math.PI / 180
-        const radius = innerRadius + (outerRadius - innerRadius) * 0.5
-        const x = cx + radius * Math.cos(-midAngle * RADIAN)
-        const y = cy + radius * Math.sin(-midAngle * RADIAN)
-
-        const name = chartData[index]?.name || ""
-        const displayText = `${name} (${(percent * 100).toFixed(0)}%)`
-
-        return (
-            <text
-                x={x}
-                y={y}
-                fill="white"
-                textAnchor="middle"
-                dominantBaseline="central"
-                style={{ fontSize: "12px", fontWeight: "bold" }}
-            >
-                {displayText}
-            </text>
-        )
-    }
+        { name: "Open", value: jobStatusCount["open"] || 0, color: "#42a5f5" },
+        { name: "In Progress", value: jobStatusCount["in progress"] || 0, color: "#ffca28" },
+        { name: "Closed", value: jobStatusCount["closed"] || 0, color: "#ab47bc" },
+        { name: "Completed", value: jobStatusCount["completed"] || 0, color: "#66bb6a" },
+    ];
 
     return (
         <div className="dashboard-main">
@@ -76,53 +56,10 @@ function Dashboard() {
             </div>
 
             <div className="kpi-cards">
-                <div className="kpi-card ship-card">
-                    <div className="kpi-card-content">
-                        <div className="kpi-info">
-                            <p className="kpi-title">Total Ships</p>
-                            <h3 className="kpi-value">{totalShips}</h3>
-                        </div>
-                        <div className="kpi-icon ship-icon">
-                            <Ship />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kpi-card overdue-card">
-                    <div className="kpi-card-content">
-                        <div className="kpi-info">
-                            <p className="kpi-title">Overdue Components</p>
-                            <h3 className="kpi-value">{overdueComponents}</h3>
-                        </div>
-                        <div className="kpi-icon overdue-icon">
-                            <Clock />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kpi-card progress-card">
-                    <div className="kpi-card-content">
-                        <div className="kpi-info">
-                            <p className="kpi-title">Jobs In Progress</p>
-                            <h3 className="kpi-value">{jobsInProgress}</h3>
-                        </div>
-                        <div className="kpi-icon progress-icon">
-                            <PenTool />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="kpi-card completed-card">
-                    <div className="kpi-card-content">
-                        <div className="kpi-info">
-                            <p className="kpi-title">Jobs Completed</p>
-                            <h3 className="kpi-value">{jobsCompleted}</h3>
-                        </div>
-                        <div className="kpi-icon completed-icon">
-                            <CheckCircle />
-                        </div>
-                    </div>
-                </div>
+                <KpiCard title="Total Ships" value={totalShips} Icon={Ship} className="ship-card" />
+                <KpiCard title="Overdue Components" value={overdueComponents} Icon={Clock} className="overdue-card" />
+                <KpiCard title="Jobs Open" value={jobStatusCount["open"] || 0} Icon={PenTool} className="open-card" />
+                <KpiCard title="Jobs Completed" value={jobStatusCount["completed"] || 0} Icon={CheckCircle} className="completed-card" />
             </div>
 
             <div className="dashboard-charts">
@@ -141,11 +78,9 @@ function Dashboard() {
                                         paddingAngle={5}
                                         dataKey="value"
                                         nameKey="name"
-                                        label={false}
                                         labelLine={false}
-                                        minAngle={10} // Ensures slices too small won't display confusing labels
+                                        minAngle={10}
                                     >
-
                                         {chartData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                         ))}
@@ -162,42 +97,55 @@ function Dashboard() {
                     <div className="activity-card-content">
                         <h3 className="activity-title">Recent Activity</h3>
                         <div className="activity-list">
-                            {[
-                                {
-                                    title: "Maintenance completed on Ship #5",
-                                    time: "2 hours ago",
-                                    icon: <CheckCircle className="activity-icon completed" />,
-                                },
-                                {
-                                    title: "New component flagged as overdue",
-                                    time: "5 hours ago",
-                                    icon: <Clock className="activity-icon overdue" />,
-                                },
-                                {
-                                    title: "Job #28 started on Ship #3",
-                                    time: "Yesterday",
-                                    icon: <PenTool className="activity-icon progress" />,
-                                },
-                                {
-                                    title: "New ship added to fleet",
-                                    time: "2 days ago",
-                                    icon: <Ship className="activity-icon ship" />,
-                                },
-                            ].map((item, index) => (
-                                <div key={index} className="activity-item">
-                                    <div className="activity-icon-container">{item.icon}</div>
-                                    <div className="activity-details">
-                                        <p className="activity-item-title">{item.title}</p>
-                                        <p className="activity-time">{item.time}</p>
+                            {jobs
+                                .slice(-4)
+                                .reverse()
+                                .map((job, index) => (
+                                    <div key={index} className="activity-item">
+                                        <div className="activity-icon-container">
+                                            {getIcon(job.status)}
+                                        </div>
+                                        <div className="activity-details">
+                                            <p className="activity-item-title">
+                                                Job #{job.id} on Ship #{job.shipId || "N/A"} - {job.status}
+                                            </p>
+                                            <p className="activity-time">
+                                                {moment(job.updatedAt || job.createdAt).fromNow()}
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default Dashboard
+function getIcon(status) {
+    const lower = status?.toLowerCase();
+    if (lower === "completed") return <CheckCircle className="activity-icon completed" />;
+    if (lower === "in progress") return <PenTool className="activity-icon progress" />;
+    if (lower === "open") return <Clock className="activity-icon open" />;
+    if (lower === "closed") return <CheckCircle className="activity-icon closed" />;
+    return <PenTool className="activity-icon" />;
+}
+
+function KpiCard({ title, value, Icon, className }) {
+    return (
+        <div className={`kpi-card ${className}`}>
+            <div className="kpi-card-content">
+                <div className="kpi-info">
+                    <p className="kpi-title">{title}</p>
+                    <h3 className="kpi-value">{value}</h3>
+                </div>
+                <div className={`kpi-icon ${className.replace("-card", "-icon")}`}>
+                    <Icon />
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Dashboard;

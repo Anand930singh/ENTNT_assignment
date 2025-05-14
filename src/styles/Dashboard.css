@@ -200,7 +200,7 @@
 
 .ship-card { border-top: 4px solid #42a5f5; }
 .overdue-card { border-top: 4px solid #ef5350; }
-.progress-card { border-top: 4px solid #ffca28; }
+.open-card { border-top: 4px solid #ffca28; }
 .completed-card { border-top: 4px solid #66bb6a; }
 
 .kpi-card-content {

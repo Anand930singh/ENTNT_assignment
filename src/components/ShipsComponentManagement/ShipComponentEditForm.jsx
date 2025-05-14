@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Save, X } from "lucide-react";
 import "../../styles/HomeShip.css";
-import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 
 const ShipComponentEditForm = ({ component, onSave, onCancel }) => {
   const isEdit = Boolean(component);
   const [availableShips, setAvailableShips] = useState([]);
+  const shipsFromRedux = useSelector((state) => state.ships.ships || [])
+  
 
   const [formData, setFormData] = useState({
     shipId: "",
@@ -16,11 +18,9 @@ const ShipComponentEditForm = ({ component, onSave, onCancel }) => {
   });
 
   useEffect(() => {
-    const shipsFromCookie = Cookies.get("ships");
-    if (shipsFromCookie) {
+    if (shipsFromRedux) {
       try {
-        const parsedShips = JSON.parse(shipsFromCookie);
-        setAvailableShips(parsedShips);
+        setAvailableShips(shipsFromRedux);
       } catch (err) {
         console.error("Invalid ships cookie:", err);
       }

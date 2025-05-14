@@ -6,36 +6,23 @@ import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Users from '../../data/users.json';
-import Cookies from 'js-cookie';
 import { Button, Typography } from '@mui/material';
 import ShipEditForm from './ShipEditForm';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { addShip, updateShip, removeShip } from '../../slice/shipSlice'; // adjust path if needed
 
 export default function ShipsListTable({ setSelectedShipDetail }) {
-  const [rows, setRows] = React.useState([]);
+  const shipReduxData = useSelector((state) => state.ships.ships || []);
+  const dispatch = useDispatch();
+
   const [editingShip, setEditingShip] = React.useState(null);
   const [openAddForm, setOpenAddForm] = React.useState(false);
 
-  React.useEffect(() => {
-    if (Array.isArray(Users.ships)) {
-      setRows(JSON.parse(Cookies.get('ships') || '[]'));
-    }
-  }, []);
-
   const handleDelete = (id) => {
-    const cookieData = Cookies.get('ships');
-    if (!cookieData) {
-      toast.error('No ships data found.');
-      return;
-    }
-
     try {
-      const parsedData = JSON.parse(cookieData);
-      const updatedData = parsedData.filter((row) => row.id !== id);
-      Cookies.set('ships', JSON.stringify(updatedData));
-      setRows(updatedData);
+      dispatch(removeShip(id));
       toast.success('Ship deleted successfully.');
     } catch (err) {
       console.error('Delete failed', err);
@@ -53,11 +40,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
 
   const handleSaveEdit = (updatedShip) => {
     try {
-      const updatedRows = rows.map((row) =>
-        row.id === editingShip.id ? { ...row, ...updatedShip } : row
-      );
-      Cookies.set('ships', JSON.stringify(updatedRows));
-      setRows(updatedRows);
+      dispatch(updateShip({ ...editingShip, ...updatedShip }));
       setEditingShip(null);
       toast.success('Ship details updated successfully.');
     } catch (err) {
@@ -68,9 +51,8 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
 
   const handleAddShip = (newShip) => {
     try {
-      const updatedShips = [...rows, { ...newShip, id: 's' + Date.now() }];
-      Cookies.set('ships', JSON.stringify(updatedShips));
-      setRows(updatedShips);
+      const shipWithId = { ...newShip, id: 's' + Date.now() };
+      dispatch(addShip(shipWithId));
       setOpenAddForm(false);
       toast.success('New ship added successfully.');
     } catch (err) {
@@ -149,7 +131,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
 
       <Paper sx={{ width: '98%' }}>
         <DataGrid
-          rows={rows}
+          rows={shipReduxData}
           columns={columns}
           getRowId={(row) => row.id}
           pageSizeOptions={[5, 10]}
