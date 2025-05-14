@@ -21,6 +21,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
   const rows = useSelector((state) => state.components.components);
   const [editingComponent, setEditingComponent] = React.useState(null);
   const [openAddForm, setOpenAddForm] = React.useState(false);
+  const userRole = useSelector((state) => state.auth.role);
 
   const handleDelete = (id) => {
     try {
@@ -62,34 +63,38 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
     }
   };
 
-  const columns = [
+  const baseColumns = [
     { field: 'name', headerName: 'Component Name', flex: 1, headerClassName: 'super-app-theme--header' },
     { field: 'serialNumber', headerName: 'Serial Number', flex: 1, headerClassName: 'super-app-theme--header' },
     { field: 'installDate', headerName: 'Install Date', flex: 1, headerClassName: 'super-app-theme--header' },
     { field: 'lastMaintenanceDate', headerName: 'Last Maintenance', flex: 1, headerClassName: 'super-app-theme--header' },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      headerClassName: 'super-app-theme--header',
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <>
-          <Tooltip title="Edit">
-            <IconButton size="small" onClick={() => handleEditClick(params.row)}>
-              <EditIcon fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
-              <DeleteIcon fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    },
   ];
+
+  const adminActionsColumn = {
+    field: 'actions',
+    headerName: 'Actions',
+    flex: 1,
+    headerClassName: 'super-app-theme--header',
+    sortable: false,
+    filterable: false,
+    renderCell: (params) => (
+      <>
+        <Tooltip title="Edit">
+          <IconButton size="small" onClick={() => handleEditClick(params.row)}>
+            <EditIcon fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
+            <DeleteIcon fontSize="inherit" />
+          </IconButton>
+        </Tooltip>
+      </>
+    ),
+  };
+
+  const columns = userRole === 'admin' ? [...baseColumns, adminActionsColumn] : baseColumns;
+
 
   return (
     <div style={{ width: '100%' }}>
@@ -97,7 +102,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
         <Typography variant="h6" className="headingTitle">
           Ship Components
         </Typography>
-        <Button
+        {userRole === "admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',
@@ -109,7 +114,7 @@ export default function ShipsComponentListTable({ setSelectedComponentDetail }) 
           onClick={handleAddComponent}
         >
           Add Component
-        </Button>
+        </Button>)}
       </div>
 
       <Paper sx={{ width: '98%' }}>

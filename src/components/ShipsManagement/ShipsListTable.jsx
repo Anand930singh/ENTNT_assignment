@@ -15,6 +15,7 @@ import { addShip, updateShip, removeShip } from '../../slice/shipSlice'; // adju
 
 export default function ShipsListTable({ setSelectedShipDetail }) {
   const shipReduxData = useSelector((state) => state.ships.ships || []);
+  const userRole = useSelector((state) => state.auth.role);
   const dispatch = useDispatch();
 
   const [editingShip, setEditingShip] = React.useState(null);
@@ -93,6 +94,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
               <VisibilityIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
+          {userRole==="admin"  && (<>
           <Tooltip title="Edit">
             <IconButton size="small" onClick={() => handleEditClick(params.row)}>
               <EditIcon fontSize="inherit" />
@@ -103,6 +105,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
               <DeleteIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
+          </>)}
         </>
       ),
     },
@@ -114,7 +117,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
         <Typography variant="h6" className="headingTitle">
           Ships
         </Typography>
-        <Button
+        {userRole === "admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',
@@ -126,7 +129,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           onClick={() => setOpenAddForm(true)}
         >
           Add Ship
-        </Button>
+        </Button>)}
       </div>
 
       <Paper sx={{ width: '98%' }}>

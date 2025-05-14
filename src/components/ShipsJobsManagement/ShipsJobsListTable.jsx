@@ -15,6 +15,7 @@ import { addJob, updateJob, removeJob, setJobs } from '../../slice/jobSlice';
 export default function ShipsJobsListTable() {
   const dispatch = useDispatch();
   const jobsReduxData = useSelector((state) => state.jobs.jobs || []);
+  const userRole = useSelector((state) => state.auth.role);
 
   const [rows, setRows] = React.useState([]);
   const [editingJob, setEditingJob] = React.useState(null);
@@ -89,53 +90,56 @@ export default function ShipsJobsListTable() {
     setRows(jobsReduxData);
   }, [jobsReduxData]);
 
-  const columns = [
-    { field: 'type', headerName: 'Job Type', flex: 1, headerClassName: 'super-app-theme--header' },
-    { field: 'priority', headerName: 'Priority', flex: 1, headerClassName: 'super-app-theme--header' },
-    {
-      field: 'status',
-      headerName: 'Status',
-      flex: 1,
-      headerClassName: 'super-app-theme--header',
-      renderCell: (params) => {
-        const statusColorMap = {
-          Open: '#1976d2',
-          Closed: '#616161',
-          Progress: '#f57c00',
-          Completed: '#2e7d32',
-        };
-        return (
-          <span style={{ color: statusColorMap[params.value] || '#000', fontWeight: 600 }}>
-            {params.value}
-          </span>
-        );
-      },
+  const baseColumns = [
+  { field: 'type', headerName: 'Job Type', flex: 1, headerClassName: 'super-app-theme--header' },
+  { field: 'priority', headerName: 'Priority', flex: 1, headerClassName: 'super-app-theme--header' },
+  {
+    field: 'status',
+    headerName: 'Status',
+    flex: 1,
+    headerClassName: 'super-app-theme--header',
+    renderCell: (params) => {
+      const statusColorMap = {
+        Open: '#1976d2',
+        Closed: '#616161',
+        Progress: '#f57c00',
+        Completed: '#2e7d32',
+      };
+      return (
+        <span style={{ color: statusColorMap[params.value] || '#000', fontWeight: 600 }}>
+          {params.value}
+        </span>
+      );
     },
-    { field: 'assignedEngineerId', headerName: 'Engineer ID', flex: 1, headerClassName: 'super-app-theme--header' },
-    { field: 'scheduledDate', headerName: 'Scheduled Date', flex: 1, headerClassName: 'super-app-theme--header' },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      headerClassName: 'super-app-theme--header',
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <>
-          <Tooltip title="Edit">
-            <IconButton size="small" onClick={() => handleEditClick(params.row)}>
-              <EditIcon fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
-              <DeleteIcon fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-        </>
-      ),
-    },
-  ];
+  },
+  { field: 'assignedEngineerId', headerName: 'Engineer ID', flex: 1, headerClassName: 'super-app-theme--header' },
+  { field: 'scheduledDate', headerName: 'Scheduled Date', flex: 1, headerClassName: 'super-app-theme--header' },
+];
+
+const adminActionsColumn = {
+  field: 'actions',
+  headerName: 'Actions',
+  flex: 1,
+  headerClassName: 'super-app-theme--header',
+  sortable: false,
+  filterable: false,
+  renderCell: (params) => (
+    <>
+      <Tooltip title="Edit">
+        <IconButton size="small" onClick={() => handleEditClick(params.row)}>
+          <EditIcon fontSize="inherit" />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
+          <DeleteIcon fontSize="inherit" />
+        </IconButton>
+      </Tooltip>
+    </>
+  ),
+};
+
+const columns = userRole === 'admin' ? [...baseColumns, adminActionsColumn] : baseColumns;
 
   return (
     <div style={{ width: '100%' }}>
@@ -143,7 +147,7 @@ export default function ShipsJobsListTable() {
         <Typography variant="h6" className="headingTitle">
           Ship Jobs
         </Typography>
-        <Button
+        {userRole==="admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',
@@ -155,7 +159,7 @@ export default function ShipsJobsListTable() {
           onClick={handleAddClick}
         >
           Add Job
-        </Button>
+        </Button>)}
       </div>
 
       <Paper sx={{ width: '98%' }}>
