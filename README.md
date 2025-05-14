@@ -1,8 +1,15 @@
 # 🚢 ENTNT – Ship Maintenance Assignment Dashboard
 
+![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/46a9cff8-7606-4488-9004-6dc2b2b7f985)
+
 **ENTNT** is a React-based dashboard designed to manage ship maintenance tasks, job assignments, and related KPIs. Built as an assignment project, it features authentication, protected routes, Redux for state management, Recharts for data visualization, and localStorage for persistence.
 
 ---
+
+## 🔗 Deployment
+
+- **Live Application**: [Your Live Link](https://entnt-assignment-chi.vercel.app/)
+- **GitHub Repository**: [GitHub Repo](https://github.com/Anand930singh/ENTNT_assignment)
 
 ## 🧩 Features
 
@@ -85,7 +92,38 @@ Use the following credentials to log into the application. Each role has differe
   </tr>
 </table>
 
+### Notification on Update/Delete/Edit
 
+
+<table>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/fbd38f76-0eb7-4653-b0a0-26a4b608ac55" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/5da81cbb-f99d-4a50-9be1-dcdbdac0234f" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/8c3c9b56-398e-429b-bdef-9829e32a04fc" width="300"/></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/f769182f-e430-43f4-912e-02a37a38deaf" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d0c5c9c4-172b-452f-8fe5-de93f0a98486" width="300"/></td>
+    <td><img src="https://github.com/user-attachments/assets/6deb0239-681b-4648-8e6e-7f9c84ae0534" width="300"/></td>
+  </tr>
+</table>
+
+
+## ⚠️ Known Issues or Limitations
+
+- No real authentication or security (user data is hardcoded).
+- Only login feature is there (no signup)
+- Data loss if `localStorage` is cleared manually.
+- No offline/online sync or backups.
+- Role access is enforced only on the frontend (can be bypassed via dev tools).
+
+## 💡 Technical Decisions
+
+- React Functional Components with Hooks for modern and clean code.
+- `localStorage` used for data simulation per the project restriction.
+- MUI components and External CSS (or your choice) for fast, utility-first styling.
+- Form Validation with native HTML5 and custom feedback logic.
+- Manual JSON structure created to seed the application on first load.
 
 
 
