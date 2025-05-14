@@ -94,7 +94,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
               <VisibilityIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
-          {userRole==="Inspector" && (
+          {userRole==="Inspector"||userRole==="Admin" && (
           <Tooltip title="Edit">
             <IconButton size="small" onClick={() => handleEditClick(params.row)}>
               <EditIcon fontSize="inherit" />
