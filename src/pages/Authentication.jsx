@@ -1,10 +1,10 @@
 import { useState } from "react"
-import { toast, ToastContainer } from "react-toastify"
-import { useSelector, useDispatch } from "react-redux"
+import { toast } from "react-toastify"
+import { useDispatch } from "react-redux"
 import "react-toastify/dist/ReactToastify.css"
 import "../styles/authentication.css"
 import { useNavigate } from "react-router-dom"
-import Users from '../data/users.json'
+import Users from "../data/users.json"
 import { login } from "../slice/authSlice"
 
 function SignInForm() {
@@ -12,36 +12,38 @@ function SignInForm() {
   const [password, setPassword] = useState("")
   const [userType, setUserType] = useState("Admin")
   const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const storeLoginData = (userData) => {
-    dispatch(login({
-      id: userData.id,
-      email: userData.email,
-      role: userData.role,
-    }));
-    localStorage.setItem('user', JSON.stringify(userData));
+    dispatch(
+      login({
+        id: userData.id,
+        email: userData.email,
+        role: userData.role,
+      }),
+    )
+    localStorage.setItem("user", JSON.stringify(userData))
   }
 
   const authenticateUser = (e) => {
-    const usersData = Users.users;
+    const usersData = Users.users
     for (const value of usersData) {
       if (value.role === userType && value.email === email && value.password === password) {
-        storeLoginData(value);
-        return true;
+        storeLoginData(value)
+        return true
       }
     }
-    return false;
+    return false
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
-    const boolAuth = await authenticateUser();
+    const boolAuth = await authenticateUser()
     setTimeout(() => {
       if (email && password && boolAuth) {
-        navigate('/home')
+        navigate("/home")
         toast.success(`Successfully signed in as ${userType}`)
       } else {
         toast.error("Sorry, looks like that's the wrong email or password.")

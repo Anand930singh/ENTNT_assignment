@@ -94,18 +94,18 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
               <VisibilityIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
-          {userRole==="admin"  && (<>
+          {userRole==="Inspector" && (
           <Tooltip title="Edit">
             <IconButton size="small" onClick={() => handleEditClick(params.row)}>
               <EditIcon fontSize="inherit" />
             </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
+          </Tooltip>)}
+
+          {userRole==="Admin" && (<Tooltip title="Delete">
             <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
               <DeleteIcon fontSize="inherit" />
             </IconButton>
-          </Tooltip>
-          </>)}
+          </Tooltip>)}
         </>
       ),
     },
@@ -117,7 +117,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
         <Typography variant="h6" className="headingTitle">
           Ships
         </Typography>
-        {userRole === "admin" && (<Button
+        {userRole === "Admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',
@@ -168,6 +168,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           ship={editingShip}
           onSave={handleSaveEdit}
           onCancel={handleCancelEdit}
+          userRole={userRole}
         />
       )}
       {openAddForm && (
@@ -175,6 +176,7 @@ export default function ShipsListTable({ setSelectedShipDetail }) {
           ship={null}
           onSave={handleAddShip}
           onCancel={() => setOpenAddForm(false)}
+          userRole={userRole}
         />
       )}
 

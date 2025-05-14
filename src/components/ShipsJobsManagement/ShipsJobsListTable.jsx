@@ -130,16 +130,16 @@ const adminActionsColumn = {
           <EditIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Delete">
+      {userRole!=="Inspector" && (<Tooltip title="Delete">
         <IconButton size="small" onClick={() => handleDelete(params.row.id)}>
           <DeleteIcon fontSize="inherit" />
         </IconButton>
-      </Tooltip>
+      </Tooltip>)}
     </>
   ),
 };
 
-const columns = userRole === 'admin' ? [...baseColumns, adminActionsColumn] : baseColumns;
+const columns = (userRole === 'Admin'||userRole === "Inspector") ? [...baseColumns, adminActionsColumn] : baseColumns;
 
   return (
     <div style={{ width: '100%' }}>
@@ -147,7 +147,7 @@ const columns = userRole === 'admin' ? [...baseColumns, adminActionsColumn] : ba
         <Typography variant="h6" className="headingTitle">
           Ship Jobs
         </Typography>
-        {userRole==="admin" && (<Button
+        {userRole==="Admin" && (<Button
           variant="outlined"
           sx={{
             fontWeight: 'bold',

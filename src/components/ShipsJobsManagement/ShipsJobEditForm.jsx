@@ -16,12 +16,14 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
 
   const priorities = ['High', 'Medium', 'Low'];
   const statuses = ['Open', 'Progress', 'Closed', 'Completed'];
+
   const [shipOptions, setShipOptions] = useState(); 
   const [componentOptions, setComponentOptions] = useState();
+
   const shipsReduxData = useSelector((state) => state.ships.ships || []);
   const componentReduxData = useSelector((state) => state.components.components || []);
-
-
+  const userRole = useSelector((state) => state.auth.role); // 'Admin' or 'Inspector'
+  console.log(userRole);
   useEffect(() => {
     if (job) {
       setFormData({
@@ -33,11 +35,11 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
         assignedEngineerId: job.assignedEngineerId || '',
         scheduledDate: job.scheduledDate || '',
       });
-    }else{
+    } else {
       setShipOptions(shipsReduxData);
-      setComponentOptions(componentReduxData)
+      setComponentOptions(componentReduxData);
     }
-  }, [job]);
+  }, [job, shipsReduxData, componentReduxData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,10 +51,20 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const payload = {
+    let payload = {
       ...formData,
       id: isAddMode ? `j${Date.now()}` : job.id,
     };
+
+    // Restrict Inspector to only status & priority in edit mode
+    if (userRole === 'Inspector' && !isAddMode) {
+      payload = {
+        id: job.id,
+        status: formData.status,
+        priority: formData.priority,
+      };
+    }
+
     onSave(payload);
   };
 
@@ -60,16 +72,17 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
     <div className="ship-edit-overlay">
       <div className="ship-edit-container">
         <div className="ship-edit-header">
-          <h2>Edit Job</h2>
+          <h2>{isAddMode ? 'Add Job' : 'Edit Job'}</h2>
           <button className="close-button" onClick={onCancel}>
             <X size={20} />
           </button>
         </div>
+
         <form onSubmit={handleSubmit} className="ship-edit-form">
           {isAddMode && (
             <>
               <div className="form-group">
-                <label htmlFor="shipId">Ship ID</label>
+                <label htmlFor="shipId">Ship</label>
                 <select
                   id="shipId"
                   name="shipId"
@@ -78,7 +91,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
                   required
                 >
                   <option value="">Select Ship</option>
-                  {shipOptions && shipOptions.map((ship) => (
+                  {shipOptions?.map((ship) => (
                     <option key={ship.id} value={ship.id}>
                       {ship.name}
                     </option>
@@ -96,7 +109,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
                   required
                 >
                   <option value="">Select Component</option>
-                  {componentOptions && componentOptions.map((comp) => (
+                  {componentOptions?.map((comp) => (
                     <option key={comp.id} value={comp.id}>
                       {comp.name}
                     </option>
@@ -115,6 +128,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
               value={formData.type}
               onChange={handleChange}
               required
+              disabled={userRole === 'Inspector' && !isAddMode}
             />
           </div>
 
@@ -127,7 +141,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
               onChange={handleChange}
               required
             >
-              <option value="">Priority</option>
+              <option value="">Select Priority</option>
               {priorities.map((p) => (
                 <option key={p} value={p}>{p}</option>
               ))}
@@ -159,6 +173,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
               value={formData.assignedEngineerId}
               onChange={handleChange}
               required
+              disabled={userRole === 'Inspector' && !isAddMode}
             />
           </div>
 
@@ -171,6 +186,7 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
               value={formData.scheduledDate}
               onChange={handleChange}
               required
+              disabled={userRole === 'Inspector' && !isAddMode}
             />
           </div>
 
