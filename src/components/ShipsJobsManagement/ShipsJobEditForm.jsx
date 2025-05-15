@@ -56,7 +56,6 @@ const ShipsJobEditForm = ({ job, isAddMode, onSave, onCancel }) => {
       id: isAddMode ? `j${Date.now()}` : job.id,
     };
 
-    // Restrict Inspector to only status & priority in edit mode
     if (userRole === 'Inspector' && !isAddMode) {
       payload = {
         id: job.id,
