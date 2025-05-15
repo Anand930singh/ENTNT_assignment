@@ -79,7 +79,7 @@ function SignInForm() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="form-group-auth">
             <input
               type="email"
               placeholder="Email *"
@@ -88,7 +88,7 @@ function SignInForm() {
               required
             />
           </div>
-          <div className="form-group">
+          <div className="form-group-auth">
             <input
               type="password"
               placeholder="Password *"
